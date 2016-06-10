@@ -1,0 +1,13 @@
+
+tcserver:
+  image: spring-petclinic:1.0.0
+  links:
+    - tc-mysql:mysql
+  ports:
+    - 9090:8080
+
+tc-mysql:
+  image: mysql
+  environment:
+    MYSQL_ROOT_PASSWORD: yoursecretpassword
+    MYSQL_DATABASE: petclinic
