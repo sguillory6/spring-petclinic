@@ -26,7 +26,7 @@
     See here for more details on commons-dbcp versus tomcat-jdbc: 
     http://blog.ippon.fr/2013/03/13/improving-the-performance-of-the-spring-petclinic-sample-application-part-3-of-5/-->
     <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource"
-          p:driverClassName="${jdbc.driverClassName}" p:url="jdbc:mysql://localhost:3306/petclinic"
+          p:driverClassName="${jdbc.driverClassName}" p:url="${jdbc.url}"
           p:username="${jdbc.username}" p:password="${jdbc.password}"/>
     <!--<bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource"-->
           <!--p:driverClassName="${jdbc.driverClassName}" p:url="jdbc:mysql://${MYSQL_PORT_3306_TCP_ADDR}:3306/petclinic"-->
