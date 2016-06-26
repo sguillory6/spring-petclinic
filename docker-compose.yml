@@ -2,12 +2,18 @@
 tcserver:
   image: spring-petclinic:1.0.0
   links:
-    - tc-mysql:mysql
+    - mysql:mysql
   ports:
     - 9090:8080
+  environment:
+    spring.profiles.active: jpa
 
-tc-mysql:
+mysql:
   image: mysql
+  volumes:
+    - ~/Development/spring-petclinic/src/main/resources/db/mysql:/docker-entrypoint-initdb.d
   environment:
     MYSQL_ROOT_PASSWORD: yoursecretpassword
     MYSQL_DATABASE: petclinic
+    MYSQL_USER: stan_db
+    MYSQL_PASSWORD: stan_db

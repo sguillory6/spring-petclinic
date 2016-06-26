@@ -14,10 +14,14 @@ buildscript {
     }
 }
 
+plugins {
+    id "org.sonarqube" version "2.0.1"
+}
+
+
 apply plugin: "java"
 apply plugin: "war"
 apply plugin: "jacoco"
-apply plugin: "sonar-runner"
 apply plugin: 'com.bmuschko.tomcat'
 apply plugin: 'docker'
 
@@ -82,32 +86,33 @@ dependencies {
             "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}"
 }
 
+test {
+    // enable TestNG support (default is JUnit)
+    useTestNG()
+
+    // set a system property for the test JVM(s)
+    systemProperty 'spring.profiles.active', 'test'
+}
+
 tomcat {
     httpPort = 8090
     contextPath = 'spring-petclinic'
 }
 
-sonarRunner {
-    toolVersion = '2.4'
-    sonarProperties {
+sonarqube {
+    properties {
         property "sonar.host.url", "http://localhost:9000/"
-//        property "sonar.jdbc.url", "jdbc:mysql://localhost:3306/sonar?useUnicode=true&amp;characterEncoding=utf8"
-//        property "sonar.jdbc.driverClassName", "com.mysql.jdbc.Driver"
-//        property "sonar.jdbc.username", "sonar"
-//        property "sonar.jdbc.password", "sonar"
     }
 }
 
 docker {
-    baseImage "swa-tcserver/ubuntu:1.0"
+    baseImage "swa-tc-server:v1"
     maintainer 'Stan Guillory "stan.guillory@wnco.com"'
-//    defaultCommand("/opt/pivotal/pivotal-tc-server-developer/insight-instance/bin/tcruntime-ctl.sh", "run")
 }
 
 task petclinicDocker(type: Docker) {
     dependsOn build
     applicationName = 'spring-petclinic'
     tagVersion = '1.0.0'
-//    dockerfile = project.file('Dockerfile')
     addFile('./build/libs', '/opt/pivotal/pivotal-tc-server-developer/insight-instance/webapps')
 }
