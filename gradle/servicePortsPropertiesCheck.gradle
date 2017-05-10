@@ -1,0 +1,51 @@
+#!/home/developer/.gvm/groovy/current/bin/groovy
+
+import groovy.io.FileType
+
+def loadPropertiesFromFile(File file) {
+    Properties properties = new Properties()
+    file.withInputStream { iit ->
+        properties.load(iit)
+    }
+
+    return properties
+}
+
+def servicePortsPropertiesCheck() {
+    def status = true
+    def endpointMap = new HashMap()
+    def dir = new File("$projectDir")
+    dir.eachFileRecurse (FileType.FILES) { file ->
+        if(file.path.matches('.*src.*') && file.name.matches('service-ports.properties')) {
+            Properties properties = loadPropertiesFromFile(file)
+            properties.each { endpoint, port ->
+                if(endpoint.contains('serviceTier.hostname')) {
+                    return
+                }
+
+                if(!endpoint.contains('serviceTier.port.')) {
+                    println "ERROR: Endpoint Name: $endpoint is malformed"
+                    status = false
+                }
+
+                if(endpointMap.containsKey(port)) {
+                    if(endpointMap.get(port).toString() != endpoint.toString()) {
+                        println "ERROR: Port number $port has conflicting names '${endpointMap.get(port).toString()}' and '$endpoint' (${file.path})"
+                        status = false
+                    }
+                    return
+                }
+
+                endpointMap.put(port, endpoint.toString())
+            }
+        }
+    }
+
+    return status
+}
+
+task checkThatServicePortNamesAreConsistent() << {
+    if(!servicePortsPropertiesCheck()) {
+        throw new GradleException('Service Port Names Are Not Consistent')
+    }
+}

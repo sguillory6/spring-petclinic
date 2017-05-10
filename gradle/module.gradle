@@ -1,0 +1,47 @@
+//apply plugin: 'generateEnvironments'
+
+task filterProjectVersionToResources(type: Copy) {
+        from 'src/main/resources'
+        include 'log4j2.xml'
+        include '*.properties'
+        into 'build/resources/main'
+        filter { String line -> line.replace('${project.version}', projectVersion) }
+}
+
+task copyToLibs(type: Copy) {
+    into "$buildDir/output/libs"
+    from configurations.runtime
+}
+
+war.shouldRunAfter test
+war.dependsOn filterProjectVersionToResources
+def jenkinsBuild = System.getenv("BUILD_TAG") ?: "000000"
+war {
+    doFirst {
+        manifest {
+            attributes('Created-By': System.properties["java.version"] + ' (' + System.properties["java.vendor"],
+                    'Implementation-Version': projectVersion,
+                    'Implementation-Build': jenkinsBuild,
+                    'Maven-Group-Id': project.group,
+                    'Maven-Artifact-Id': project.name,
+                    'Maven-Version': projectVersion,
+                    'Maven-Build-Timestamp': new Date(),
+                    'Gradle-Version': GradleVersion.current().getVersion(),
+                    'Built-By': System.properties["user.name"],
+                    'Build-Jdk': System.properties["java.version"]
+            )
+        }
+    }
+}
+
+task deployStub(type: Exec, dependsOn: ['build']) {
+    commandLine "$projectDir/bin/build_gradle.sh", 'local'
+}
+task deployLive(type: Exec, dependsOn: ['build']) {
+    commandLine "$projectDir/bin/build_gradle.sh", 'localSharedService'
+}
+
+build.mustRunAfter clean
+build.dependsOn copyToLibs
+deployStub.mustRunAfter build
+deployLive.mustRunAfter build
