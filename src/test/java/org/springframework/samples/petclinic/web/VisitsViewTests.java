@@ -45,7 +45,7 @@ import org.springframework.web.context.WebApplicationContext;
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = {"classpath:VisitsViewTests-config.xml"})
-@ActiveProfiles("jdbc")
+@ActiveProfiles(profiles = { "jdbc", "local"})
 public class VisitsViewTests {
 
     @Autowired

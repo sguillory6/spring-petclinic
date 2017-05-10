@@ -1,6 +1,9 @@
 # CREATE DATABASE IF NOT EXISTS petclinic;
 # GRANT ALL PRIVILEGES ON petclinic.* TO pc@localhost IDENTIFIED BY 'pc';
 
+#  for elastic beanstalk
+#USE ebdb;
+
 USE petclinic;
 
 CREATE TABLE IF NOT EXISTS vets (

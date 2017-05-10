@@ -6,7 +6,8 @@ tcserver:
   ports:
     - 9090:8080
   environment:
-    spring.profiles.active: jpa
+    spring.profiles.active: jpa,docker
+    profiles: jpa,docker
 
 mysql:
   image: mysql

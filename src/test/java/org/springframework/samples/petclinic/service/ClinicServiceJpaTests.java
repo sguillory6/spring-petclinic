@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @ContextConfiguration(locations = {"classpath:spring/business-config.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles("jpa")
+@ActiveProfiles(profiles = { "jpa", "local"})
 public class ClinicServiceJpaTests extends AbstractClinicServiceTests {
 
 }
