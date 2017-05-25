@@ -2,9 +2,6 @@ buildscript {
     repositories {
         jcenter()
         mavenCentral()
-//        maven {
-//            url 'http://jcenter.bintray.com'
-//        }
     }
 
     dependencies {
@@ -23,6 +20,8 @@ apply plugin: "war"
 apply plugin: "jacoco"
 apply plugin: 'com.bmuschko.tomcat'
 apply plugin: 'docker'
+apply plugin: 'maven-publish'
+
 
 version = "1.0.0"
 description = "spring-petclinic"
@@ -118,6 +117,27 @@ sonarqube {
         property "sonar.host.url", "http://localhost:9000/"
     }
 }
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId 'org.springframework.samples'
+            artifactId 'spring-petclinic'
+            version '1.0.0'
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            credentials {
+                username 'admin'
+                password 'admin123'
+            }
+            url "http://localhost:8081/nexus/content/repositories/releases"
+        }
+    }
+}
+
 
 docker {
     baseImage "swa-tcserver:1.0"
