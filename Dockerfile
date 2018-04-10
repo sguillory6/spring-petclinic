@@ -1,5 +1,7 @@
-FROM swa-tcserver:1.0
+FROM tomcat:9
 MAINTAINER Stanford S. Guillory "stan.guillory@wnco.com"
+
+EXPOSE 8080
 
 COPY ./build/libs /opt/pivotal/pivotal-tc-server-developer/insight-instance/webapps
 
